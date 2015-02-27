@@ -1,20 +1,11 @@
-jeedom_mysensors
+jeedom_mqtt
 ================
 
 === Changelog ===
 
-See : https://github.com/lunarok/jeedom_mysensors/blob/master/doc/fr_FR/changelog.asciidoc
+See : https://github.com/lunarok/jeedom_mqtt/blob/master/doc/fr_FR/changelog.asciidoc
 
 === Todo in plugin ===
 
-Load sketch with avrdude / or integrate OTA
-
-=== Ideas for nodes ===
-
-Send libversion at presentation including for gateway
-
-Data type is not needed and sensor types must be more globals (ie. IR_SEND must become REMOTE, no type, no reference to a technology)
-
-Send sensor name in presentation payload
-
-Send the power source by node, maybe in battery
+Integrate connexion to Mosquitto as a broker, install and configure mosquitto
+Create equipments in Jeedom from what Mosquitto has, listen for informations and send commands
