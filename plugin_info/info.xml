@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <info>
-    <id>mySensors</id>
-    <name>mySensors</name>
-    <description>Permet de gérer des équipements mySensors (capteurs et actuateurs DIY basés sur de l'arduino et une puce NRF24L01)</description>
+    <id>MQTT</id>
+    <name>MQTT</name>
+    <description>Permet de gérer des équipements accessible par le protocole MQTT, intègre un broker pour une connexion directe de clients et la connexion à un broker existant</description>
     <icon>fa fa-tablet</icon>
     <licence>AGPL</licence>
-    <author>johann,Filoucaenais,lunarok,Aloïs,mx85,totovaauski</author>
-    <installation>Le module serialport pour nodejs est nécessaire pour une gateway série. La configuration réseau Jeedom doit également être remplie.</installation>
+    <author>lunarok</author>
+    <installation>L'installation installera Mosquitto (client pub/sub et broker).</installation>
     <require>1.166</require>
-    <version>1.9.99</version>
+    <version>0.1</version>
     <category>automation protocol</category>
-    <allowRemote>1</allowRemote>
+    <allowRemote>0</allowRemote>
 </info>
 
