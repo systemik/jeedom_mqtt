@@ -20,12 +20,12 @@ printModuleInfo($(this).attr('data-eqLogic_id'));
 return false;
 });
 
-$("#bt_addmySensorsInfo").on('click', function(event) {
+$("#bt_addMQTTInfo").on('click', function(event) {
     var _cmd = {type: 'info'};
     addCmdToTable(_cmd);
 });
 
-$("#bt_addmySensorsAction").on('click', function(event) {
+$("#bt_addMQTTAction").on('click', function(event) {
     var _cmd = {type: 'action'};
     addCmdToTable(_cmd);
 });
@@ -57,7 +57,7 @@ $("#table_cmd").sortable({axis: "y", cursor: "move", items: ".cmd", placeholder:
 function printModuleInfo(_id) {
     $.ajax({// fonction permettant de faire de l'ajax
         type: "POST", // méthode de transmission des données au fichier php
-        url: "plugins/mySensors/core/ajax/mySensors.ajax.php", // url du fichier php
+        url: "plugins/MQTT/core/ajax/MQTT.ajax.php", // url du fichier php
         data: {
             action: "getModuleInfo",
             id: _id,
@@ -72,14 +72,14 @@ function printModuleInfo(_id) {
                 $('#div_alert').showAlert({message: data.result, level: 'danger'});
                 return;
             }
-            $('.mySensorsInfo').value('');
+            $('.MQTTInfo').value('');
             for (var i in data.result) {
                 var value = data.result[i]['value'];
                 if (isset(data.result[i]['unite'])) {
                     value += ' ' + data.result[i]['unite'];
                 }
-                $('.mySensorsInfo[data-l1key=' + i + ']').value(value);
-                $('.mySensorsInfo[data-l1key=' + i + ']').attr('title', data.result[i]['datetime']);
+                $('.MQTTInfo[data-l1key=' + i + ']').value(value);
+                $('.MQTTInfo[data-l1key=' + i + ']').attr('title', data.result[i]['datetime']);
             }
         }
     });

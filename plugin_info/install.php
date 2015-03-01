@@ -20,30 +20,30 @@ require_once dirname(__FILE__) . '/../../../core/php/core.inc.php';
 
 /*
 function install() {
-    if (mySensors::deamonRunning()) {
-        mySensors::stopDeamon();
+    if (MQTT::deamonRunning()) {
+        MQTT::stopDeamon();
     }
 }
 
 function update() {
-    if (mySensors::deamonRunning()) {
-        mySensors::stopDeamon();
+    if (MQTT::deamonRunning()) {
+        MQTT::stopDeamon();
     }
 }
 
 function remove() {
-    if (mySensors::deamonRunning()) {
-        mySensors::stopDeamon();
+    if (MQTT::deamonRunning()) {
+        MQTT::stopDeamon();
     }
 }
 
 */
 
-function mySensors_install() {
-    $cron = cron::byClassAndFunction('mySensors', 'pull');
+function MQTT_install() {
+    $cron = cron::byClassAndFunction('MQTT', 'pull');
     if (!is_object($cron)) {
         $cron = new cron();
-        $cron->setClass('mySensors');
+        $cron->setClass('MQTT');
         $cron->setFunction('pull');
         $cron->setEnable(1);
         $cron->setDeamon(0);
@@ -55,34 +55,34 @@ function mySensors_install() {
     }
 }
 
-function mySensors_update() {
-    $cron = cron::byClassAndFunction('mySensors', 'pull');
+function MQTT_update() {
+    $cron = cron::byClassAndFunction('MQTT', 'pull');
     if (!is_object($cron)) {
         $cron = new cron();
-        $cron->setClass('mySensors');
+        $cron->setClass('MQTT');
         $cron->setFunction('pull');
         $cron->setEnable(1);
         $cron->setDeamon(0);
         $cron->setSchedule('*/15 * * * *');
         $cron->save();
     }
-    if (method_exists('mySensors', 'stopDeamon')) {
-        mySensors::stopDeamon();
+    if (method_exists('MQTT', 'stopDeamon')) {
+        MQTT::stopDeamon();
     }
     $cron->stop();
     $sensor_path = dirname(__FILE__) . '/../node';
-    log::add('mySensors','info','Chemin d installation ' . $sensor_path);		
+    log::add('MQTT','info','Chemin d installation ' . $sensor_path);		
     exec('cd ' . $sensor_path . '; npm install');
     exec('sudo apt-get -y install avrdude');
 }
 
-function mySensors_remove() {
-    $cron = cron::byClassAndFunction('mySensors', 'pull');
+function MQTT_remove() {
+    $cron = cron::byClassAndFunction('MQTT', 'pull');
     if (is_object($cron)) {
         $cron->remove();
     }
-    if (method_exists('mySensors', 'stopDeamon')) {
-        mySensors::stopDeamon();
+    if (method_exists('MQTT', 'stopDeamon')) {
+        MQTT::stopDeamon();
     }
 }
 

@@ -6,7 +6,7 @@
     <icon>fa fa-tablet</icon>
     <licence>AGPL</licence>
     <author>lunarok</author>
-    <installation>L'installation installera Mosquitto (client pub/sub et broker).</installation>
+    <installation>Le plugin nécessite Mosquitto (client pub/sub et broker).</installation>
     <require>1.166</require>
     <version>0.1</version>
     <category>automation protocol</category>

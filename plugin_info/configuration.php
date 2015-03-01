@@ -33,14 +33,14 @@ if (!isConnect()) {
 		echo '<div class="alert alert-danger"><b>{{La configuration du plugin se fait uniquement sur le Jeedom principal}}</b></div>';
 	} else {
     
-    $statusGateway = config::byKey('gateway','mySensors');
-    $nodeHost = config::byKey('nodeHost','mySensors');
+    $statusGateway = config::byKey('gateway','MQTT');
+    $nodeHost = config::byKey('nodeHost','MQTT');
     if (!$nodeHost || $nodeHost == "master" || $nodeHost == "network" || $nodeHost == "none" ) {
-		$statusNode = mySensors::deamonRunning();
+		$statusNode = MQTT::deamonRunning();
 	} else {
 		$jeeNetwork = jeeNetwork::byId($nodeHost);
 		$jsonrpc = $jeeNetwork->getJsonRpc();
-		if (!$jsonrpc->sendRequest('deamonRunning', array('plugin' => 'mySensors'))) {
+		if (!$jsonrpc->sendRequest('deamonRunning', array('plugin' => 'MQTT'))) {
 			throw new Exception($jsonrpc->getError(), $jsonrpc->getErrorCode());
 		}
 		$statusNode = $jsonrpc->getResult();
@@ -51,18 +51,18 @@ if (!isConnect()) {
 		echo '<div class="alert alert-success"><b>{{Connexion}} : </b>';
 	}
     if ($statusNode != 'ok' ) {
-		echo '{{Le service mySensors (nodejs) n\'est pas démarré}} ';
+		echo '{{Le service MQTT (nodejs) n\'est pas démarré}} ';
 	} else {
-		echo '{{Le service mySensors (nodejs) est en marche}} ';
+		echo '{{Le service MQTT (nodejs) est en marche}} ';
 	}
 	if (!$statusGateway) {
 		echo '{{et la Gateway est non connectée}}</div>';
 	} else {
-		$libVer = config::byKey('gateLib','mySensors');
+		$libVer = config::byKey('gateLib','MQTT');
 		if ($libVer=='') {
 			$libVer = '{{inconnue}}';
 		}
-		echo '{{et la Gateway est connectée (version mySensors }}' . $libVer . ')</div>';
+		echo '{{et la Gateway est connectée (version MQTT }}' . $libVer . ')</div>';
 	}
 	
 
@@ -74,7 +74,7 @@ if (!isConnect()) {
 					<option value="none">{{Aucun}}</option>
                     <option value="master">{{Jeedom maître}}</option>';
                     
-                    foreach (jeeNetwork::byPlugin('mySensors') as $jeeNetwork) {
+                    foreach (jeeNetwork::byPlugin('MQTT') as $jeeNetwork) {
 						echo '<option value="' . $jeeNetwork->getId(). '">{{Jeedom esclave}} ' . $jeeNetwork->getName() . ' (' . $jeeNetwork->getId(). ')</option>';
 					}
                     
@@ -143,7 +143,7 @@ if (!isConnect()) {
 							$("#manual_port").hide();
 						    $.ajax({// fonction permettant de faire de l'ajax
 						        type: "POST", // méthode de transmission des données au fichier php
-						        url: "plugins/mySensors/core/ajax/mySensors.ajax.php", // url du fichier php
+						        url: "plugins/MQTT/core/ajax/MQTT.ajax.php", // url du fichier php
 						        data: {
 						            action: "getUSB",
 						            id: $( this ).val(),
@@ -171,7 +171,7 @@ if (!isConnect()) {
 									//$("#select_port").value('serie');
 									$.ajax({// fonction permettant de faire de l'ajax
 								        type: "POST", // méthode de transmission des données au fichier php
-								        url: "plugins/mySensors/core/ajax/mySensors.ajax.php", // url du fichier php
+								        url: "plugins/MQTT/core/ajax/MQTT.ajax.php", // url du fichier php
 								        data: {
 								            action: "confUSB",
 								        },
@@ -194,10 +194,10 @@ if (!isConnect()) {
 					});						
 				});
 				
-     function mySensors_postSaveConfiguration(){
+     function MQTT_postSaveConfiguration(){
              $.ajax({// fonction permettant de faire de l'ajax
             type: "POST", // methode de transmission des données au fichier php
-            url: "plugins/mySensors/core/ajax/mySensors.ajax.php", // url du fichier php
+            url: "plugins/MQTT/core/ajax/MQTT.ajax.php", // url du fichier php
             data: {
                 action: "postSave",
             },
@@ -210,7 +210,7 @@ if (!isConnect()) {
                 $('#div_alert').showAlert({message: data.result, level: 'danger'});
                 return;
             }
-            $('#ul_plugin .li_plugin[data-plugin_id=mySensors]').click();
+            $('#ul_plugin .li_plugin[data-plugin_id=MQTT]').click();
         }
     });				
 			
