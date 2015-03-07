@@ -1,0 +1,11 @@
+{
+    "plugins\/MQTT\/plugin_info\/info.xml": {
+
+    },
+    "plugins\/MQTT\/plugin_info\/configuration.php": {
+
+    },
+    "plugins\/MQTT\/desktop\/php\/MQTT.php": {
+
+    }
+}

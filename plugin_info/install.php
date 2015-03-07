@@ -49,9 +49,7 @@ function MQTT_install() {
         $cron->setDeamon(0);
         $cron->setSchedule('*/15 * * * *');
         $cron->save();
-        $sensor_path = realpath(dirname(__FILE__) . '/../../node');
-        exec('cd ' . $sensor_path . '; npm install');
-        exec('sudo apt-get -y install avrdude');
+        exec('sudo apt-get -y install mosquitto');
     }
 }
 
@@ -70,10 +68,6 @@ function MQTT_update() {
         MQTT::stopDeamon();
     }
     $cron->stop();
-    $sensor_path = dirname(__FILE__) . '/../node';
-    log::add('MQTT','info','Chemin d installation ' . $sensor_path);		
-    exec('cd ' . $sensor_path . '; npm install');
-    exec('sudo apt-get -y install avrdude');
 }
 
 function MQTT_remove() {
