@@ -49,7 +49,8 @@ function MQTT_install() {
         $cron->setDeamon(0);
         $cron->setSchedule('*/15 * * * *');
         $cron->save();
-        exec('sudo apt-get -y install mosquitto');
+        exec('sudo apt-get -y install mosquitto mosquitto-clients libmosquitto-dev');
+        //exec('pecl install Mosquitto-alpha');
     }
 }
 
