@@ -1,36 +1,23 @@
-== mySensors
-
-=== Description
+== Description
 include::presentation.asciidoc[]
 
 '''
-=== Prerequis
+== Prerequis
 include::prerequis.asciidoc[]
 
 '''
-=== Configuration
+== Configuration
 include::configuration.asciidoc[]
 
 '''
-=== Débuter
-include::debuter.asciidoc[]
-
-'''
-=== FAQ
+== FAQ
 include::faq.asciidoc[]
 
 '''
-=== Troubleshoting
+== Troubleshoting
 include::troubleshoting.asciidoc[]
 
-'''
-=== Autres Documentations
-include::documentation.asciidoc[]
 
 '''
-=== Changelog
+== Changelog
 include::changelog.asciidoc[]
-
-'''
-=== Crédits
-include::credits.asciidoc[]
