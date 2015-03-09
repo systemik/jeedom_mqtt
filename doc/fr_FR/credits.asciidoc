@@ -1,4 +1,0 @@
-==== Les Contributeurs au plugin mySensors pour Jeedom
-  
-  lunarok : qui maintient le plugin
-
