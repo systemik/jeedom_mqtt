@@ -3,19 +3,8 @@
 if (!isConnect('admin')) {
     throw new Exception('{{401 - Accès non autorisé}}');
 }
-sendVarToJS('eqType', 'mySensors');
-$eqLogics = eqLogic::byType('mySensors');
-$dico = mySensors::$_dico;
-foreach($dico['S'] as &$value){
-$value = __($value[1],__FILE__);
-}
-foreach($dico['N'] as &$value){
-$value = __($value,__FILE__);
-}
-foreach($dico['C'] as &$value){
-$value = __($value,__FILE__);
-}
-sendVarToJS('mySensorDico', $dico)
+sendVarToJS('eqType', 'MQTT');
+$eqLogics = eqLogic::byType('MQTT');
 
 ?>
 
@@ -35,11 +24,11 @@ sendVarToJS('mySensorDico', $dico)
     </div>
     
     <div class="col-lg-10 col-md-9 col-sm-8 eqLogicThumbnailDisplay" style="border-left: solid 1px #EEE; padding-left: 25px;">
-        <legend>{{Mes mySensors}}
+        <legend>{{Mes MQTT}}
         </legend>
         <?php
         if (count($eqLogics) == 0) {
-            echo "<br/><br/><br/><center><span style='color:#767676;font-size:1.2em;font-weight: bold;'>{{Aucun mySensors détecté, démarrer un node pour ajout}}</span></center>";
+            echo "<br/><br/><br/><center><span style='color:#767676;font-size:1.2em;font-weight: bold;'>{{Aucun MQTT détecté, démarrer un node pour ajout}}</span></center>";
         } else {
             ?>
             <div class="eqLogicThumbnailContainer">
@@ -47,7 +36,7 @@ sendVarToJS('mySensorDico', $dico)
                 foreach ($eqLogics as $eqLogic) {
                     echo '<div class="eqLogicDisplayCard cursor" data-eqLogic_id="' . $eqLogic->getId() . '" style="background-color : #ffffff; height : 200px;margin-bottom : 10px;padding : 5px;border-radius: 2px;width : 160px;margin-left : 10px;" >';
                     echo "<center>";
-                    echo '<img src="plugins/mySensors/doc/images/mySensors_icon.png" height="105" width="95" />';
+                    echo '<img src="plugins/MQTT/doc/images/MQTT_icon.png" height="105" width="95" />';
                     echo "</center>";
                     echo '<span style="font-size : 1.1em;position:relative; top : 15px;word-break: break-all;white-space: pre-wrap;word-wrap: break-word;"><center>' . $eqLogic->getHumanName(true, true) . '</center></span>';
                     echo '</div>';
@@ -67,10 +56,10 @@ sendVarToJS('mySensorDico', $dico)
                 <i class='fa fa-cogs eqLogicAction pull-right cursor expertModeVisible' data-action='configure'></i>
                 </legend>
                 <div class="form-group">
-                    <label class="col-md-2 control-label">{{Nom du Node}}</label>
+                    <label class="col-md-2 control-label">{{Nom du Sujet}}</label>
                     <div class="col-md-3">
                         <input type="text" class="eqLogicAttr form-control" data-l1key="id" style="display : none;" />
-                        <input type="text" class="eqLogicAttr form-control" data-l1key="name" placeholder="{{Nom de l'équipement mySensors}}"/>
+                        <input type="text" class="eqLogicAttr form-control" data-l1key="name" placeholder="{{Nom de l'équipement MQTT}}"/>
                     </div>
                 </div>
                 <div class="form-group">
@@ -135,92 +124,29 @@ sendVarToJS('mySensorDico', $dico)
                         <legend>{{Informations}}</legend>
 
                         <div class="form-group">
-                    		<label class="col-md-2 control-label">{{ID du Node}}</label>
+                    		<label class="col-md-2 control-label">{{ID du Sujet}}</label>
                     		<div class="col-md-3">
-                    		 <span class="mySensorsInfo tooltips label label-default" id="nodeId" data-l1key="nodeId"></span>
+                    		 <span class="MQTTInfo tooltips label label-default" id="nodeId" data-l1key="topicId"></span>
                     		</div>
-                    		
-                    		<label class="col-md-2 control-label">{{Version mySensors}}</label>
-                    		<div class="col-md-3">
-                        	<span class="mySensorsInfo tooltips label label-default" data-l1key="libVersion"></span>
-                    		</div>                    		
-                		
                 	</div>                    		
-                        
-                        <div id="infoSketch" class="form-group">
-                    		<label class="col-md-2 control-label">{{Nom du Sketch}}</label>
-                		 <div class="col-md-3">
-                		  <span class="mySensorsInfo tooltips label label-default" data-l1key="sketchNom"></span>
-                    		</div>
-                    	
-                    	        <label class="col-md-2 control-label">{{Version du Sketch}}</label>
-                    		<div class="col-md-3">
-                        	<span class="mySensorsInfo tooltips label label-default" data-l1key="sketchVersion"></span>
-                    		</div>
-                    		
-                	</div>
-                	
+
                 	<div class="form-group">
                     		<label class="col-md-2 control-label">{{Dernière Activité}}</label>
                     		<div class="col-md-3">
-                        	<span class="mySensorsInfo tooltips label label-default" data-l1key="lastActivity"></span>
+                        	<span class="MQTTInfo tooltips label label-default" data-l1key="lastActivity"></span>
                     		</div>    
-                    		
-                    		<label class="col-md-2 control-label">{{Batterie}}</label>
-                    		<div class="col-md-3">
-                    		 <span class="mySensorsInfo tooltips label label-default" data-l1key="perBatterie"></span>
-                    		</div>
                 	</div>  
-	 
-                	<div class="form-group">
-                    		<label class="col-md-2 control-label">{{Documentation}}</label>
-                    		<div class="col-md-3">
-                        	<a href="http://doc.jeedom.fr/fr_FR/doc_mySensors_modules.html" class="btn btn-default"><i class="fa fa-book"></i> Documentation</a>
-                    		</div>    
-                    		
-                    		<label class="col-md-2 control-label">{{Redémarrer le Node}}</label>
-                    		<div class="col-md-3">
-				<a class="btn btn-default" id="bt_restartEq"><i class="fa fa-power-off"></i> Redémarrer</a>
-				</div>
-                	</div>                 
-
-                	<legend>{{Paramètres du Sketch}}</legend>
-                	
-                	
 
                     </fieldset> 
                 </form>
             </div>
         </div>
 
-	<legend>{{mySensors}}</legend>
+	<legend>{{MQTT}}</legend>
 
-        <a class="btn btn-default btn-sm" id="bt_addmySensorsInfo"><i class="fa fa-plus-circle"></i> {{Ajouter une info}}</a>
-        <a class="btn btn-default btn-sm" id="bt_addmySensorsAction"><i class="fa fa-plus-circle"></i> {{Ajouter une commande}}</a><br/><br/>
-        		<script>
-				$('#bt_restartEq').on('click', function () {
-					var nodeId = $('#nodeId').text();
-					$.ajax({// fonction permettant de faire de l'ajax
-						type: "POST", // methode de transmission des données au fichier php
-						url: "plugins/mySensors/core/ajax/mySensors.ajax.php", // url du fichier php
-						data: {
-							action: "restartEq",
-							node: nodeId,
-						},
-						dataType: 'json',
-						error: function (request, status, error) {
-							handleAjaxError(request, status, error);
-						},
-						success: function (data) { // si l'appel a bien fonctionné
-							if (data.state != 'ok') {
-								$('#div_alert').showAlert({message: data.result, level: 'danger'});
-								return;
-							}
-						$('#div_alert').showAlert({message: 'Le node a été relancé', level: 'success'});
-						}
-					});
-				});
-			</script>        
+        <a class="btn btn-default btn-sm" id="bt_addMQTTInfo"><i class="fa fa-plus-circle"></i> {{Ajouter une info}}</a>
+        <a class="btn btn-default btn-sm" id="bt_addMQTTAction"><i class="fa fa-plus-circle"></i> {{Ajouter une commande}}</a><br/><br/>
+      
         <table id="table_cmd" class="table table-bordered table-condensed">
             <thead>
                 <tr>
@@ -250,5 +176,5 @@ sendVarToJS('mySensorDico', $dico)
     </div>
 </div>
 
-<?php include_file('desktop', 'mySensors', 'js', 'mySensors'); ?>
+<?php include_file('desktop', 'MQTT', 'js', 'MQTT'); ?>
 <?php include_file('core', 'plugin.template', 'js'); ?>
