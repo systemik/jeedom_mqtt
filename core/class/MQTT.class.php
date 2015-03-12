@@ -180,7 +180,7 @@ class MQTT extends eqLogic {
     /*     * **********************Getteur Setteur*************************** */
 	}
 	
-}
+
 
 class MQTTCmd extends cmd {
     /*     * *************************Attributs****************************** */

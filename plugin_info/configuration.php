@@ -30,9 +30,9 @@ if (!isConnect()) {
     <?php
     $statusMQTT = config::byKey('status','MQTT');
 	if ($statusMQTT != 'ok' ) {
-		echo '<div class="alert alert-danger"><b>{{Connexion}} : </b> {{Jeedom n\'est pas connecté à Mosquitto}</div>';
+		echo '<div class="alert alert-danger"><b>{{Connexion}} : </b> {{Jeedom n\'est pas connecté à Mosquitto}}</div>';
 	} else {
-		echo '<div class="alert alert-success"><b>{{Connexion}} : </b> {{Jeedom est connecté à Mosquitto}</div>';
+		echo '<div class="alert alert-success"><b>{{Connexion}} : </b> {{Jeedom est connecté à Mosquitto}}</div>';
 	}
 	?>
 
@@ -40,19 +40,19 @@ if (!isConnect()) {
     <div class="form-group">
             <label class="col-lg-4 control-label">{{IP de Mosquitto : }}</label>
             <div class="col-lg-4">
-				<input id="mosquitto_por" class="configKey form-control" data-l1key="mqttAdress" style="margin-top:5px;display:none" placeholder="127.0.0.1"/>
+				<input id="mosquitto_por" class="configKey form-control" data-l1key="mqttAdress" style="margin-top:5px" placeholder="127.0.0.1"/>
             </div>
         </div>
     <div class="form-group">
             <label class="col-lg-4 control-label">{{Port de Mosquitto : }}</label>
             <div class="col-lg-4">
-				<input id="mosquitto_por" class="configKey form-control" data-l1key="mqttPort" style="margin-top:5px;display:none" placeholder="127.0.0.1"/>
+				<input id="mosquitto_por" class="configKey form-control" data-l1key="mqttPort" style="margin-top:5px" placeholder="1883"/>
             </div>
         </div>
     <div class="form-group">
             <label class="col-lg-4 control-label">{{Identifiant de Connexion : }}</label>
             <div class="col-lg-4">
-				<input id="mosquitto_por" class="configKey form-control" data-l1key="mqttId" style="margin-top:5px;display:none" placeholder="127.0.0.1"/>
+				<input id="mosquitto_por" class="configKey form-control" data-l1key="mqttId" style="margin-top:5px" placeholder="Jeedom"/>
             </div>
         </div>        
 				
