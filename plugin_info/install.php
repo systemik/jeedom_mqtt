@@ -18,27 +18,6 @@
 
 require_once dirname(__FILE__) . '/../../../core/php/core.inc.php';
 
-/*
-function install() {
-    if (MQTT::deamonRunning()) {
-        MQTT::stopDeamon();
-    }
-}
-
-function update() {
-    if (MQTT::deamonRunning()) {
-        MQTT::stopDeamon();
-    }
-}
-
-function remove() {
-    if (MQTT::deamonRunning()) {
-        MQTT::stopDeamon();
-    }
-}
-
-*/
-
 function MQTT_install() {
     $cron = cron::byClassAndFunction('MQTT', 'daemon');
     if (!is_object($cron)) {
@@ -66,10 +45,6 @@ function MQTT_update() {
         $cron->save();
     }
     $cron->stop();
-    if (method_exists('MQTT', 'stopDeamon')) {
-        MQTT::stopDeamon();
-    }
-    $cron->stop();
 }
 
 function MQTT_remove() {
@@ -77,9 +52,6 @@ function MQTT_remove() {
     if (is_object($cron)) {
         $cron->stop();
         $cron->remove();
-    }
-    if (method_exists('MQTT', 'stopDeamon')) {
-        MQTT::stopDeamon();
     }
 }
 
