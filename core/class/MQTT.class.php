@@ -29,21 +29,30 @@ class MQTT extends eqLogic {
     /************************Methode static*************************** */
 
 	public static function deamon() {
-        log::add('MQTT', 'info', 'Lancement du démon MQTT');
-        $mosqHost = config::byKey('mqttAdress', 'MQTT', 0);
-        $mosqPort = config::byKey('mqttPort', 'MQTT', 0);
-        $mosqId = config::byKey('mqttId', 'MQTT', 0);
-        //https://github.com/mqtt/mqtt.github.io/wiki/mosquitto-php
-	$client = new Mosquitto\Client($mosqId);
-	$client->onConnect('connect');
-	$client->onDisconnect('disconnect');
-	$client->onSubscribe('subscribe');
-	$client->onMessage('message');
-	$client->connect($mosqHost, $mosqPort, 60);
-	$client->subscribe('#', 1); // Subscribe to all messages
+        	log::add('MQTT', 'info', 'Lancement du démon MQTT');
+        	$mosqHost = config::byKey('mqttAdress', 'MQTT', 0);
+		$mosqPort = config::byKey('mqttPort', 'MQTT', 0);
+        	$mosqId = config::byKey('mqttId', 'MQTT', 0);
+        	//https://github.com/mqtt/mqtt.github.io/wiki/mosquitto-php
+		$client = new Mosquitto\Client($mosqId);
+		$client->onConnect('connect');
+		$client->onDisconnect('disconnect');
+		$client->onSubscribe('subscribe');
+		$client->onMessage('message');
+		$client->connect($mosqHost, $mosqPort, 60);
+		$client->subscribe('#', 1); // Subscribe to all messages
+		$client->loopForever();
+    	}
 
-	$client->loopForever();
-    }
+	public static function publishMosquitto( $subject, $message ) {
+		log::add('MQTT', 'info', 'Envoi du message ' . $message . ' vers ' . $subject);
+		$mosqHost = config::byKey('mqttAdress', 'MQTT', 0);
+        	$mosqPort = config::byKey('mqttPort', 'MQTT', 0);
+        	$mosqId = config::byKey('mqttId', 'MQTT', 0);
+		$client = new Mosquitto\Client($mosqId);
+		$client->connect($mosqHost, $mosqPort, 60);
+		$client->publish($subject, $message, 0, false);
+	}
 
 	public static function sendToController( $destination, $sensor, $command, $acknowledge, $type, $payload ) {
 		$nodeHost = config::byKey('nodeHost', 'MQTT', 0);
