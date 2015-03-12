@@ -30,25 +30,21 @@ class MQTT extends eqLogic {
 
 	public static function deamon() {
         log::add('MQTT', 'info', 'Lancement du démon MQTT');
+        $mosqHost = config::byKey('mqttAdress', 'MQTT', 0);
+        $mosqPort = config::byKey('mqttPort', 'MQTT', 0);
+        $mosqId = config::byKey('mqttId', 'MQTT', 0);
         //https://github.com/mqtt/mqtt.github.io/wiki/mosquitto-php
-	$client = new Mosquitto\Client(CLIENT_ID);
+	$client = new Mosquitto\Client($mosqId);
 	$client->onConnect('connect');
 	$client->onDisconnect('disconnect');
 	$client->onSubscribe('subscribe');
 	$client->onMessage('message');
-	$client->connect(BROKER, PORT, 60);
+	$client->connect($mosqHost, $mosqPort, 60);
 	$client->subscribe('#', 1); // Subscribe to all messages
 
 	$client->loopForever();
     }
-	
 
-    
- 	public static function saveConfig( $config ) {
-		config::save('nodeRun', $config,  'MQTT');
-	    log::add('MQTT','info','Sauvegarde de la configuration' . $config);
-	    }   
-	
 	public static function sendToController( $destination, $sensor, $command, $acknowledge, $type, $payload ) {
 		$nodeHost = config::byKey('nodeHost', 'MQTT', 0);
 		if ($nodeHost != 'master' && $nodeHost != 'network') {
