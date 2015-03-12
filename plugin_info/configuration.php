@@ -37,42 +37,26 @@ if (!isConnect()) {
 	?>
 
     
-    <div id=globalSensors class="form-group">
-            <label class="col-lg-4 control-label">{{Adresse de Mosquitto : }}</label>
+    <div class="form-group">
+            <label class="col-lg-4 control-label">{{IP de Mosquitto : }}</label>
             <div class="col-lg-4">
 				<input id="mosquitto_por" class="configKey form-control" data-l1key="mqttAdress" style="margin-top:5px;display:none" placeholder="127.0.0.1"/>
             </div>
         </div>
+    <div class="form-group">
+            <label class="col-lg-4 control-label">{{Port de Mosquitto : }}</label>
+            <div class="col-lg-4">
+				<input id="mosquitto_por" class="configKey form-control" data-l1key="mqttPort" style="margin-top:5px;display:none" placeholder="127.0.0.1"/>
+            </div>
+        </div>
+    <div class="form-group">
+            <label class="col-lg-4 control-label">{{Identifiant de Connexion : }}</label>
+            <div class="col-lg-4">
+				<input id="mosquitto_por" class="configKey form-control" data-l1key="mqttId" style="margin-top:5px;display:none" placeholder="127.0.0.1"/>
+            </div>
+        </div>        
 				
 				<div class="alert alert-success"><b>{{Sauvegarde}} : </b>{{La sauvegarde de la configuration redémarre automatiquement le service, il faut attendre environ 1 minute pour qu\'il soit joignable}}</div>' ;
-
-				
-				<script>
-				
-		function MQTT_postSaveConfiguration(){
-             $.ajax({// fonction permettant de faire de l'ajax
-            type: "POST", // methode de transmission des données au fichier php
-            url: "plugins/MQTT/core/ajax/MQTT.ajax.php", // url du fichier php
-            data: {
-                action: "postSave",
-            },
-            dataType: 'json',
-            error: function (request, status, error) {
-                handleAjaxError(request, status, error);
-            },
-            success: function (data) { // si l'appel a bien fonctionné
-            if (data.state != 'ok') {
-                $('#div_alert').showAlert({message: data.result, level: 'danger'});
-                return;
-            }
-            $('#ul_plugin .li_plugin[data-plugin_id=MQTT]').click();
-        }
-    });				
-			
-		}			
-			
-				
-			</script>
 
     </fieldset>
 </form>
