@@ -28,101 +28,21 @@ class MQTT extends eqLogic {
 
     /************************Methode static*************************** */
 
-	public static function cron() {
-            if (!self::deamonRunning()) {
-                		self::runDeamon();
-            		}
-        }
-	
-	public static function runDeamon() {
+	public static function deamon() {
         log::add('MQTT', 'info', 'Lancement du démon MQTT');
-	$mqttAdress = config::byKey('mqttAdress', 'MQTT', 0);
+        //https://github.com/mqtt/mqtt.github.io/wiki/mosquitto-php
+	$client = new Mosquitto\Client(CLIENT_ID);
+	$client->onConnect('connect');
+	$client->onDisconnect('disconnect');
+	$client->onSubscribe('subscribe');
+	$client->onMessage('message');
+	$client->connect(BROKER, PORT, 60);
+	$client->subscribe('#', 1); // Subscribe to all messages
 
-		if ($mqttAdress == '' ) {
-			throw new Exception(__('Plugin non configuré', __FILE__));
-		}
-		
-		if (config::byKey('nodeRun', 'MQTT', 0) == '2') { //Je suis l'esclave
-			$url  = config::byKey('jeeNetwork::master::ip') . '/core/api/jeeApi.php?api=' . config::byKey('jeeNetwork::master::apikey');
-		} else {
-			if (!config::byKey('internalPort')) {
-				$url = 'http://127.0.0.1' . config::byKey('internalComplement') . '/core/api/jeeApi.php?api=' . config::byKey('api');
-			} else {
-				$url = 'http://127.0.0.1:' . config::byKey('internalPort') . config::byKey('internalComplement') . '/core/api/jeeApi.php?api=' . config::byKey('api');
-			}
-		}
-	
-	$sensor_path = realpath(dirname(__FILE__) . '/../../node');	
-        $cmd = 'nice -n 19 nodejs ' . $sensor_path . '/MQTT.js ' . $url . ' ' . $usbGateway . ' ' . $gateMode . ' ' . $gatePort . ' ' . $inclusion;
-		
-        log::add('MQTT', 'info', 'Lancement démon MQTT : ' . $cmd);
-        $result = exec('nohup ' . $cmd . ' >> ' . log::getPathToLog('MQTT') . ' 2>&1 &');
-        if (strpos(strtolower($result), 'error') !== false || strpos(strtolower($result), 'traceback') !== false) {
-            log::add('MQTT', 'error', $result);
-            return false;
-        }
-        sleep(2);
-        if (!self::deamonRunning()) {
-            sleep(10);
-            if (!self::deamonRunning()) {
-                log::add('MQTT', 'error', '{{Impossible de lancer le démon MQTT, vérifiez le port}}', 'unableStartDeamon');
-                return false;
-            }
-        }
-        message::removeAll('MQTT', 'unableStartDeamon');
-        log::add('MQTT', 'info', 'Démon MQTT lancé');
+	$client->loopForever();
     }
 	
-	
-	public static function deamonRunning() {
-   
-		$pid = trim( shell_exec ('ps ax | grep "MQTT/node/MQTT.js" | grep -v "grep" | wc -l') );
-		
-		if ($pid != '' && $pid != '0') {
-                return true;
-        }
 
-        return false;
-    }
-
-    public static function stopDeamon() {
-        if (!self::deamonRunning())
-			return true;
-			
-		$pid = trim(shell_exec('ps ax | grep "MQTT/node/MQTT.js" | grep -v "grep" | awk \'{print $1}\''));
-		if ( $pid == '' ){
-			return true;
-		}
-		
-        exec('kill ' . $pid);
-        log::add('MQTT', 'info', 'Arrêt du service MQTT');
-        $check = self::deamonRunning();
-        $retry = 0;
-        while ($check) {
-            $check = self::deamonRunning();
-            $retry++;
-            if ($retry > 10) {
-                $check = false;
-            } else {
-                sleep(1);
-            }
-        }
-        exec('kill -9 ' . $pid);
-        $check = self::deamonRunning();
-        $retry = 0;
-        while ($check) {
-            $check = self::deamonRunning();
-            $retry++;
-            if ($retry > 10) {
-                $check = false;
-            } else {
-                sleep(1);
-            }
-        }
-		config::save('gateway', '0',  'MQTT');
-
-        return self::deamonRunning();
-    }
     
  	public static function saveConfig( $config ) {
 		config::save('nodeRun', $config,  'MQTT');
@@ -223,73 +143,7 @@ class MQTT extends eqLogic {
 				$mysCmd->save();
 			}
 
-			if ($name == 'Store') {
-				$relonId = 'Store'.$sensor.'Up';
-				$reloffId = 'Store'.$sensor.'Down';
-				$relstopId = 'Store'.$sensor.'Stop';
-				$onlogic = MQTTCmd::byEqLogicIdAndLogicalId($elogic->getId(),$relonId);
-				$offlogic = MQTTCmd::byEqLogicIdAndLogicalId($elogic->getId(),$reloffId);
-				$stoplogic = MQTTCmd::byEqLogicIdAndLogicalId($elogic->getId(),$relstopId);
-				$cmdlogic = MQTTCmd::byEqLogicIdAndLogicalId($elogic->getId(),$cmdId);
-				$cmId = $cmdlogic->getId();
-				if (!is_object($offlogic)) {
-					$mysCmd = new MQTTCmd();
-					$mysCmd->setEventOnly(0);
-				$cmds = $elogic->getCmd();
-				$order = count($cmds);
-				$mysCmd->setOrder($order);					
-					$mysCmd->setConfiguration('cmdCommande', '1');
-					$mysCmd->setConfiguration('request', '1');
-					$mysCmd->setConfiguration('cmdtype', '29');
-					$mysCmd->setConfiguration('sensor', $sensor);
-					$mysCmd->setEqLogic_id($elogic->getId());
-					$mysCmd->setEqType('MQTT');
-					$mysCmd->setLogicalId($reloffId);
-					$mysCmd->setType('action');
-					$mysCmd->setSubType('other');
-					$mysCmd->setValue($cmId);
-					$mysCmd->setName( "Relever Store ". $sensor );
-					$mysCmd->save();
-				}
-				if (!is_object($onlogic)) {
-					$mysCmd = new MQTTCmd();
-					$mysCmd->setEventOnly(0);
-				$cmds = $elogic->getCmd();
-				$order = count($cmds);
-				$mysCmd->setOrder($order);					
-					$mysCmd->setConfiguration('cmdCommande', '1');
-					$mysCmd->setConfiguration('request', '1');
-					$mysCmd->setConfiguration('cmdtype', '30');
-					$mysCmd->setConfiguration('sensor', $sensor);
-					$mysCmd->setEqLogic_id($elogic->getId());
-					$mysCmd->setEqType('MQTT');
-					$mysCmd->setLogicalId($relonId);
-					$mysCmd->setType('action');
-					$mysCmd->setSubType('other');
-					$mysCmd->setValue($cmId);
-					$mysCmd->setName( "Baisser Store " . $sensor );
-					$mysCmd->save();
-				}	
-				if (!is_object($stoplogic)) {
-					$mysCmd = new MQTTCmd();
-					$mysCmd->setEventOnly(0);
-				$cmds = $elogic->getCmd();
-				$order = count($cmds);
-				$mysCmd->setOrder($order);					
-					$mysCmd->setConfiguration('cmdCommande', '1');
-					$mysCmd->setConfiguration('request', '1');
-					$mysCmd->setConfiguration('cmdtype', '31');
-					$mysCmd->setConfiguration('sensor', $sensor);
-					$mysCmd->setEqLogic_id($elogic->getId());
-					$mysCmd->setEqType('MQTT');
-					$mysCmd->setLogicalId($relonId);
-					$mysCmd->setType('action');
-					$mysCmd->setSubType('other');
-					$mysCmd->setValue($cmId);
-					$mysCmd->setName( "Arrêt Store " . $sensor );
-					$mysCmd->save();
-				}
-			}
+
 			
 		}
 
@@ -298,70 +152,6 @@ class MQTT extends eqLogic {
 	
 	}
 
-
-public function getInfo($_infos = '') {
-    $return = array();
-        $return['nodeId'] = array(
-            'value' => $this->getConfiguration('nodeid', ''),
-            );
-        $return['libVersion'] = array(
-            'value' => $this->getConfiguration('LibVersion', ''),
-            );
-        $return['sketchNom'] = array(
-            'value' => $this->getConfiguration('SketchName', ''),
-            );
-        $return['sketchVersion'] = array(
-            'value' => $this->getConfiguration('SketchVersion', ''),
-            );
-        $batterie = $this->getConfiguration('battery', '');
-        	if ($batterie == '') {
-			$rebatterie = 'secteur';
-		}
-		else {
-			$rebatterie = $batterie . ' %';
-		}
-	$return['perBatterie'] = array(
-       	    'value' => $rebatterie,
-            );
-        $return['lastActivity'] = array(
-            'value' => $this->getConfiguration('updatetime', ''),
-            );            
-return $return;
-}
-
-	
-    public static function event() {
-
-		$messageType = init('messagetype');
-		switch ($messageType) {
-		
-			case 'saveValue' : self::saveValue(); break;
-		}
-		
-	
-	/*
-        $cmd = MQTTCmd::byId(init('id'));
-        if (!is_object($cmd)) {
-            throw new Exception('Commande ID virtuel inconnu : ' . init('id'));
-        }
-        $value = init('value');
-        $virtualCmd = virtualCmd::byId($cmd->getConfiguration('infoId'));
-        if (is_object($virtualCmd)) {
-            if ($virtualCmd->getEqLogic()->getEqType_name() != 'virtual') {
-                throw new Exception(__('La cible de la commande virtuel n\'est pas un équipement de type virtuel', __FILE__));
-            }
-            if ($this->getSubType() != 'slider' && $this->getSubType() != 'color') {
-                $value = $this->getConfiguration('value');
-            }
-            $virtualCmd->setConfiguration('value', $value);
-            $virtualCmd->save();
-        } else {
-            $cmd->setConfiguration('value', $value);
-            $cmd->save();
-        }
-        $cmd->event($value);
-		
-    }*/
 
     /*     * *********************Methode d'instance************************* */
 
