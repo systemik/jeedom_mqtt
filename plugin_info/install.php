@@ -40,14 +40,14 @@ function remove() {
 */
 
 function MQTT_install() {
-    $cron = cron::byClassAndFunction('MQTT', 'pull');
+    $cron = cron::byClassAndFunction('MQTT', 'daemon');
     if (!is_object($cron)) {
         $cron = new cron();
         $cron->setClass('MQTT');
-        $cron->setFunction('pull');
+        $cron->setFunction('daemon');
         $cron->setEnable(1);
-        $cron->setDeamon(0);
-        $cron->setSchedule('*/15 * * * *');
+        $cron->setDeamon(1);
+        $cron->setSchedule('* * * * *');
         $cron->save();
         exec('sudo apt-get -y install mosquitto mosquitto-clients libmosquitto-dev');
         //exec('pecl install Mosquitto-alpha');
@@ -55,16 +55,17 @@ function MQTT_install() {
 }
 
 function MQTT_update() {
-    $cron = cron::byClassAndFunction('MQTT', 'pull');
+    $cron = cron::byClassAndFunction('MQTT', 'daemon');
     if (!is_object($cron)) {
         $cron = new cron();
         $cron->setClass('MQTT');
-        $cron->setFunction('pull');
+        $cron->setFunction('daemon');
         $cron->setEnable(1);
-        $cron->setDeamon(0);
-        $cron->setSchedule('*/15 * * * *');
+        $cron->setDeamon(1);
+        $cron->setSchedule('* * * * *');
         $cron->save();
     }
+    $cron->stop();
     if (method_exists('MQTT', 'stopDeamon')) {
         MQTT::stopDeamon();
     }
@@ -74,6 +75,7 @@ function MQTT_update() {
 function MQTT_remove() {
     $cron = cron::byClassAndFunction('MQTT', 'pull');
     if (is_object($cron)) {
+        $cron->stop();
         $cron->remove();
     }
     if (method_exists('MQTT', 'stopDeamon')) {
