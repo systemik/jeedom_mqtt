@@ -35,13 +35,29 @@ class MQTT extends eqLogic {
         	$mosqId = config::byKey('mqttId', 'MQTT', 0);
         	//https://github.com/mqtt/mqtt.github.io/wiki/mosquitto-php
 		$client = new Mosquitto\Client($mosqId);
-		$client->onConnect('connect');
-		$client->onDisconnect('disconnect');
-		$client->onSubscribe('subscribe');
-		$client->onMessage('message');
+		$client->onConnect('MQTT::connect');
+		$client->onDisconnect('MQTT::disconnect');
+		$client->onSubscribe('MQTT::subscribe');
+		$client->onMessage('MQTT::message');
 		$client->connect($mosqHost, $mosqPort, 60);
 		$client->subscribe('#', 1); // Subscribe to all messages
 		$client->loopForever();
+    	}
+    	
+    	public static function connect( $r ) {
+    		log::add('MQTT', 'info', 'Connecté à Mosquitto' . $r);
+    	}
+    	
+    	public static function disconnect( ) {
+    		log::add('MQTT', 'info', 'Déconnecté de Mosquitto');
+    	}
+    	
+    	public static function subscribe( ) {
+    		log::add('MQTT', 'info', 'Subscribe ');
+    	}
+    	
+    	public static function message( $message ) {
+    		log::add('MQTT', 'info', 'Message' . $message->topic . $message->payload);
     	}
 
 	public static function publishMosquitto( $subject, $message ) {
@@ -216,12 +232,8 @@ class MQTTCmd extends cmd {
 						
 					$eqLogic = $this->getEqLogic();
 					
-					MQTT::sendToController( 
-						$eqLogic->getConfiguration('nodeid') ,
-						$this->getConfiguration('sensor'),
-						$this->getConfiguration('cmdCommande'),
-						1,
-						$this->getConfiguration('cmdtype'),
+					MQTT::publishMosquitto( 
+						$eqLogic->getConfiguration('topicId') ,
 						$request ); 
 					
 					$result = $request;
