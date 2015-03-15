@@ -29,7 +29,7 @@ if (!isConnect()) {
     <fieldset>
     <?php
     $statusMQTT = config::byKey('status','MQTT');
-	if ($statusMQTT != 'ok' ) {
+	if ($statusMQTT != '1' ) {
 		echo '<div class="alert alert-danger"><b>{{Connexion}} : </b> {{Jeedom n\'est pas connecté à Mosquitto}}</div>';
 	} else {
 		echo '<div class="alert alert-success"><b>{{Connexion}} : </b> {{Jeedom est connecté à Mosquitto}}</div>';
@@ -54,9 +54,36 @@ if (!isConnect()) {
             <div class="col-lg-4">
 				<input id="mosquitto_por" class="configKey form-control" data-l1key="mqttId" style="margin-top:5px" placeholder="Jeedom"/>
             </div>
-        </div>        
+        </div>              
 				
 				<div class="alert alert-success"><b>{{Sauvegarde}} : </b>{{La sauvegarde de la configuration redémarre automatiquement le service, il faut attendre environ 1 minute pour qu\'il soit joignable}}</div>' ;
+				
+			<script>	
+							
+	     function MQTT_postSaveConfiguration(){
+             $.ajax({// fonction permettant de faire de l'ajax
+            type: "POST", // methode de transmission des données au fichier php
+            url: "plugins/MQTT/core/ajax/MQTT.ajax.php", // url du fichier php
+            data: {
+                action: "postSave",
+            },
+            dataType: 'json',
+            error: function (request, status, error) {
+                handleAjaxError(request, status, error);
+            },
+            success: function (data) { // si l'appel a bien fonctionné
+            if (data.state != 'ok') {
+                $('#div_alert').showAlert({message: data.result, level: 'danger'});
+                return;
+            }
+            $('#ul_plugin .li_plugin[data-plugin_id=MQTT]').click();
+        }
+    });				
+			
+		}			
+			
+				
+			</script>
 
     </fieldset>
 </form>

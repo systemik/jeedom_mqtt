@@ -7,5 +7,5 @@ See : https://github.com/lunarok/jeedom_mqtt/blob/master/doc/fr_FR/changelog.asc
 
 === Todo in plugin ===
 
-Integrate connexion to Mosquitto as a broker, install and configure mosquitto
-Create equipments in Jeedom from what Mosquitto has, listen for informations and send commands
+Install pecl php-Mosquitto
+Créer des commandes pour publier un topic

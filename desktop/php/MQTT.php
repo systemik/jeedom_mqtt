@@ -28,7 +28,7 @@ $eqLogics = eqLogic::byType('MQTT');
         </legend>
         <?php
         if (count($eqLogics) == 0) {
-            echo "<br/><br/><br/><center><span style='color:#767676;font-size:1.2em;font-weight: bold;'>{{Aucun MQTT détecté, démarrer un node pour ajout}}</span></center>";
+            echo "<br/><br/><br/><center><span style='color:#767676;font-size:1.2em;font-weight: bold;'>{{Aucun équipement MQTT détecté}}</span></center>";
         } else {
             ?>
             <div class="eqLogicThumbnailContainer">
@@ -56,7 +56,7 @@ $eqLogics = eqLogic::byType('MQTT');
                 <i class='fa fa-cogs eqLogicAction pull-right cursor expertModeVisible' data-action='configure'></i>
                 </legend>
                 <div class="form-group">
-                    <label class="col-md-2 control-label">{{Nom du Sujet}}</label>
+                    <label class="col-md-2 control-label">{{Nom du Topic}}</label>
                     <div class="col-md-3">
                         <input type="text" class="eqLogicAttr form-control" data-l1key="id" style="display : none;" />
                         <input type="text" class="eqLogicAttr form-control" data-l1key="name" placeholder="{{Nom de l'équipement MQTT}}"/>
@@ -124,9 +124,9 @@ $eqLogics = eqLogic::byType('MQTT');
                         <legend>{{Informations}}</legend>
 
                         <div class="form-group">
-                    		<label class="col-md-2 control-label">{{ID du Sujet}}</label>
+                    		<label class="col-md-2 control-label">{{ID du Topic}}</label>
                     		<div class="col-md-3">
-                    		 <span class="MQTTInfo tooltips label label-default" id="nodeId" data-l1key="topicId"></span>
+                    		 <span class="MQTTInfo tooltips label label-default" id="nodeId" data-l1key="nodeId"></span>
                     		</div>
                 	</div>                    		
 
@@ -153,8 +153,8 @@ $eqLogics = eqLogic::byType('MQTT');
                     <th style="width: 50px;">#</th>
                     <th style="width: 150px;">{{Nom}}</th>
                     <th style="width: 110px;">{{Sous-Type}}</th>
-                    <th>{{Capteur}}</th>
-                    <th style="width: 100px;">{{Donnée}}</th>
+                    <th>{{Topic}}</th>
+                    <th style="width: 100px;">{{Valeur}}</th>
                     <th style="width: 200px;">{{Paramètres}}</th>
                     <th style="width: 100px;"></th>
                 </tr>

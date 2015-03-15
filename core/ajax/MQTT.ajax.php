@@ -24,6 +24,19 @@ try {
         throw new Exception(__('401 - {{Accès non autorisé}}', __FILE__));
     }
     
+    if (init('action') == 'getModuleInfo') {
+        $eqLogic = MQTT::byId(init('id'));
+        if (!is_object($eqLogic)) {
+        throw new Exception(__('{{MQTT eqLogic non trouvé}} : ', __FILE__) . init('id'));
+            }
+        ajax::success($eqLogic->getInfo());
+    }
+    
+    if (init('action') == 'postSave') {
+		MQTT::stopDaemon();
+        ajax::success();
+    }
+    
     throw new Exception(__('{{Aucune methode correspondante à}} : ', __FILE__) . init('action'));
     /*     * *********Catch exeption*************** */
 } catch (Exception $e) {

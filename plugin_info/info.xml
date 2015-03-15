@@ -3,7 +3,7 @@
     <id>MQTT</id>
     <name>MQTT</name>
     <description>Permet de gérer des équipements accessible par le protocole MQTT, intègre un broker pour une connexion directe de clients et la connexion à un broker existant</description>
-    <icon>fa fa-tablet</icon>
+    <icon>fa fa-rss</icon>
     <licence>AGPL</licence>
     <author>lunarok</author>
     <installation>Le plugin nécessite Mosquitto (broker MQTT).</installation>

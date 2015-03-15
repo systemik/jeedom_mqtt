@@ -28,28 +28,35 @@ class MQTT extends eqLogic {
 
     /************************Methode static*************************** */
 
-	public static function deamon() {
+		public static function daemon() {
         	log::add('MQTT', 'info', 'Lancement du démon MQTT');
         	$mosqHost = config::byKey('mqttAdress', 'MQTT', 0);
-		$mosqPort = config::byKey('mqttPort', 'MQTT', 0);
+			$mosqPort = config::byKey('mqttPort', 'MQTT', 0);
         	$mosqId = config::byKey('mqttId', 'MQTT', 0);
         	//https://github.com/mqtt/mqtt.github.io/wiki/mosquitto-php
-		$client = new Mosquitto\Client($mosqId);
-		$client->onConnect('MQTT::connect');
-		$client->onDisconnect('MQTT::disconnect');
-		$client->onSubscribe('MQTT::subscribe');
-		$client->onMessage('MQTT::message');
-		$client->connect($mosqHost, $mosqPort, 60);
-		$client->subscribe('#', 1); // Subscribe to all messages
-		$client->loopForever();
+			$client = new Mosquitto\Client($mosqId);
+			$client->onConnect('MQTT::connect');
+			$client->onDisconnect('MQTT::disconnect');
+			$client->onSubscribe('MQTT::subscribe');
+			$client->onMessage('MQTT::message');
+			$client->connect($mosqHost, $mosqPort, 60);
+			$client->subscribe('#', 1); // Subscribe to all messages
+			$client->loopForever();
     	}
     	
+    	public function stopDaemon() { 
+			$cron = cron::byClassAndFunction('MQTT', 'daemon');
+			$cron->stop();
+		}
+    	
     	public static function connect( $r ) {
-    		log::add('MQTT', 'info', 'Connecté à Mosquitto' . $r);
+    		log::add('MQTT', 'info', 'Connecté à Mosquitto ' . $r);
+    		config::save('status', '1',  'MQTT');
     	}
     	
     	public static function disconnect( ) {
     		log::add('MQTT', 'info', 'Déconnecté de Mosquitto');
+    		config::save('status', '0',  'MQTT');
     	}
     	
     	public static function subscribe( ) {
@@ -57,122 +64,99 @@ class MQTT extends eqLogic {
     	}
     	
     	public static function message( $message ) {
-    		log::add('MQTT', 'info', 'Message' . $message->topic . $message->payload);
+    		log::add('MQTT', 'info', 'Message ' . $message->payload . ' sur ' . $message->topic);
+    		$topic = $message->topic;
+    		$topicArray = explode("/", $topic);
+			$cmdId = end($topicArray);
+			$key = count($topicArray) - 1;
+			unset($topicArray[$key]);
+			$nodeid = (implode($topicArray,'/'));
+    		$value = $message->payload;
+    		log::add('MQTT', 'info', 'Message : ' . $value . ' pour information : ' . $cmdId . ' sur : ' . $nodeid);
+			$elogic = self::byLogicalId($nodeid, 'MQTT');
+			if (is_object($elogic)) { 
+				$elogic->setStatus('lastCommunication', date('Y-m-d H:i:s'));
+				$elogic->save();
+				$cmdlogic = MQTTCmd::byEqLogicIdAndLogicalId($elogic->getId(),$cmdId);
+				if (is_object($cmdlogic)) {
+					log::add('MQTT', 'info', 'Cmdlogic existe');
+					$topCmd->setConfiguration('topic', $topic);
+					$cmdlogic->setConfiguration('value', $value);
+					$cmdlogic->save();
+					$cmdlogic->event($value);
+				} else {
+					log::add('MQTT', 'info', 'Cmdlogic n existe pas');
+					$topCmd = new MQTTCmd();
+					$topCmd->setEqLogic_id($elogic->getId());
+					$topCmd->setEqType('MQTT');
+					$topCmd->setCache('enable', 0);
+					$topCmd->setEventOnly(1);
+					$topCmd->setIsVisible(1);
+					$topCmd->setIsHistorized(0);
+					$topCmd->setSubType('string');
+					$topCmd->setLogicalId($cmdId);
+					$topCmd->setType('info');
+					$topCmd->setLogicalId($cmdId);
+					$topCmd->setType('info');
+					$topCmd->setName( $cmdId );
+					$topCmd->setConfiguration('topic', $topic);
+					$topCmd->setConfiguration('value', $value);
+					$topCmd->save();
+					$topCmd->event($value);
+				}
+			} else {
+				log::add('MQTT', 'info', 'Equipement n existe pas');
+				$topic = new MQTT();
+				$topic->setEqType_name('MQTT');
+				$topic->setLogicalId($nodeid);
+				$topic->setName($nodeid);
+				$topic->setIsEnable(true);
+				$topic->save();
+				$topic->setStatus('lastCommunication', date('Y-m-d H:i:s'));
+				$topic->save();
+				$topCmd = new MQTTCmd();
+				$topCmd->setEqLogic_id($topic->getId());
+				$topCmd->setEqType('MQTT');
+				$topCmd->setCache('enable', 0);
+				$topCmd->setEventOnly(1);
+				$topCmd->setIsVisible(1);
+				$topCmd->setIsHistorized(0);
+				$topCmd->setSubType('string');
+				$topCmd->setLogicalId($cmdId);
+				$topCmd->setType('info');
+				$topCmd->setName( $cmdId );
+				$topCmd->setConfiguration('topic', $topic);
+				$topCmd->setConfiguration('value', $value);
+				$topCmd->save();
+				$topCmd->event($value);
+			}
     	}
 
 	public static function publishMosquitto( $subject, $message ) {
 		log::add('MQTT', 'info', 'Envoi du message ' . $message . ' vers ' . $subject);
-		$mosqHost = config::byKey('mqttAdress', 'MQTT', 0);
-        	$mosqPort = config::byKey('mqttPort', 'MQTT', 0);
-        	$mosqId = config::byKey('mqttId', 'MQTT', 0);
-		$client = new Mosquitto\Client($mosqId);
-		$client->connect($mosqHost, $mosqPort, 60);
-		$client->publish($subject, $message, 0, false);
+        $mosqHost = config::byKey('mqttAdress', 'MQTT', 0);
+		$mosqPort = config::byKey('mqttPort', 'MQTT', 0);
+        $mosqId = config::byKey('mqttId', 'MQTT', 0);
+		$publish = new Mosquitto\Client();
+		$publish->connect($mosqHost, $mosqPort, 60);
+		$publish->publish($subject, $message, 1, false);
+		$publish->publish('mytopic', 'subject', 0, false);
+		$publish->disconnect();
+		$client->publish($subject, $message, 1, false);
+		unset($publish);
 	}
 
-	public static function sendToController( $destination, $sensor, $command, $acknowledge, $type, $payload ) {
-		$nodeHost = config::byKey('nodeHost', 'MQTT', 0);
-		if ($nodeHost != 'master' && $nodeHost != 'network') {
-			$jeeSlave = jeeNetwork::byId($nodeHost);
-			$urlNode = getIpFromString($jeeSlave->getIp());
-		} else {
-			$urlNode = "127.0.0.1";
-		}
-		log::add('MQTT', 'info', $urlNode);
-		$msg = $destination . ";" . $sensor . ";" . $command . ";" . $acknowledge . ";" .$type . ";" . $payload;
-		log::add('MQTT', 'info', $msg);
-		$fp = fsockopen($urlNode, 8019, $errno, $errstr);
-		   if (!$fp) {
-		   echo "ERROR: $errno - $errstr<br />\n";
-		} else {
-	
-		   fwrite($fp, $msg);
-		   fclose($fp);
-		}
-
+	public function getInfo($_infos = '') {
+		$return = array();
+        $return['nodeId'] = array(
+            'value' => $this->getLogicalId(),
+            );
+        $return['lastActivity'] = array(
+            'value' => $this->getConfiguration('updatetime', ''),
+            );            
+		return $return;
 	}
 	
-	public static function saveValue() {
-		$nodeid = init('id');
-		$sensor = init('sensor');
-		$value = init('value');
-		$type = init('donnees');
-		$daType = $type;
-		$cmdId = 'Sensor'.$sensor;
-		$elogic = self::byLogicalId($nodeid, 'MQTT');
-		if (is_object($elogic)) { 
-			$elogic->setStatus('lastCommunication', date('Y-m-d H:i:s'));
-			$elogic->save();
-			$cmdlogic = MQTTCmd::byEqLogicIdAndLogicalId($elogic->getId(),$cmdId);
-			if (is_object($cmdlogic)) {
-				$cmdlogic->setConfiguration('value', $value);
-				$cmdlogic->setConfiguration('sensorType', $daType);
-				$cmdlogic->save();
-				$cmdlogic->event($value);
-			}
-		}
-	}
-	
-	public static function saveSensor() {
-		sleep(1);
-		$nodeid = init('id');
-		$value = init('value');
-		$sensor = init('sensor');
-		//exemple : 0 => array('S_DOOR','Ouverture','door','binary','','','1',),
-		$name = self::$_dico['S'][$value][1];
-		if ($name == false ) {
-			$name = 'UNKNOWN';
-		}
-		$unite = self::$_dico['S'][$value][4];
-		$sType = $value;
-		$info = self::$_dico['S'][$value][3];
-		$widget = self::$_dico['S'][$value][2];
-		$history = self::$_dico['S'][$value][5];
-		$visible = self::$_dico['S'][$value][6];
-		$cmdId = 'Sensor'.$sensor;
-		$elogic = self::byLogicalId($nodeid, 'MQTT');
-		if (is_object($elogic)) {
-			$cmdlogic = MQTTCmd::byEqLogicIdAndLogicalId($elogic->getId(),$cmdId);
-			if (is_object($cmdlogic)) {
-				if ( $cmdlogic->getConfiguration('sensorCategory', '') != $sType ) {
-					$cmdlogic->setConfiguration('sensorCategory', $sType);
-					$cmdlogic->save();
-				}
-			}
-			else {
-				$mysCmd = new MQTTCmd();
-				$cmds = $elogic->getCmd();
-				$order = count($cmds);
-				$mysCmd->setOrder($order);
-				$mysCmd->setCache('enable', 0);
-				$mysCmd->setEventOnly(1);
-				$mysCmd->setConfiguration('sensorCategory', $sType);
-				$mysCmd->setConfiguration('sensor', $sensor);
-				$mysCmd->setEqLogic_id($elogic->getId());
-				$mysCmd->setEqType('MQTT');
-				$mysCmd->setLogicalId($cmdId);
-				$mysCmd->setType('info');
-				$mysCmd->setSubType($info);
-				$mysCmd->setName( $name . " " . $sensor );
-				$mysCmd->setUnite( $unite );
-				$mysCmd->setIsVisible($visible);
-				if ($info != 'string') {
-					$mysCmd->setIsHistorized($history);
-				}
-				$mysCmd->setTemplate("mobile",$widget );
-				$mysCmd->setTemplate("dashboard",$widget );
-				$mysCmd->save();
-			}
-
-
-			
-		}
-
-	
-		
-	
-	}
-
 
     /*     * *********************Methode d'instance************************* */
 
@@ -203,6 +187,7 @@ class MQTTCmd extends cmd {
 					
                 case 'action' :
 					$request = $this->getConfiguration('request');
+					$topic = $this->getConfiguration('topic');
 					
                     switch ($this->getSubType()) {
                         case 'slider':
@@ -233,7 +218,7 @@ class MQTTCmd extends cmd {
 					$eqLogic = $this->getEqLogic();
 					
 					MQTT::publishMosquitto( 
-						$eqLogic->getConfiguration('topicId') ,
+						$topic ,
 						$request ); 
 					
 					$result = $request;

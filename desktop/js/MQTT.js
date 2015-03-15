@@ -100,26 +100,14 @@ function addCmdToTable(_cmd) {
 			tr += '<span class="cmdAttr" data-l1key="id"></span>';
         tr += '</td>';
         tr += '<td>';
-			tr += '<input class="cmdAttr form-control input-sm" data-l1key="name" style="width : 140px;" placeholder="{{Nom du capteur}}"></td>';
+			tr += '<input class="cmdAttr form-control input-sm" data-l1key="name" style="width : 140px;" placeholder="{{Nom de l\'info}}"></td>';
         tr += '<td>';
 			tr += '<input class="cmdAttr form-control type input-sm" data-l1key="type" value="info" disabled style="margin-bottom : 5px;" />';
 			tr += '<span class="subType" subType="' + init(_cmd.subType) + '"></span>';
-        tr += '</td>';
-        tr += '<td>';
-			tr += '<textarea class="cmdAttr form-control input-sm" data-l1key="configuration" data-l2key="sensor" style="height : 33px;" ' + disabled + ' placeholder="{{Capteur}}"></textarea>';
-	tr += 'Valeur actuelle :<br/>';		
-	if (_cmd.configuration[sensorCategory] == "Virtuel") {
-		tr += '<textarea class="cmdAttr form-control input-sm" data-l1key="configuration" data-l2key="value" style="height : 33px;" ' + disabled + ' placeholder="{{Valeur}}"></textarea>';		
-		tr += '<a class="btn btn-default cursor listEquipementInfo btn-sm" data-input="value"><i class="fa fa-list-alt "></i> {{Rechercher équipement}}</a>';
-	} else {
-		tr += '<textarea class="cmdAttr form-control input-sm" data-l1key="configuration" data-l2key="value" style="height : 33px;" ' + disabled + ' placeholder="{{Valeur}}" readonly=true></textarea>';		
-	}
-	tr += 'Type de capteur :<br/>';		
-	tr += '<textarea class="cmdAttr form-control input-sm" data-l1key="configuration" data-l2key="sensorCategory" style="height : 33px;" ' + disabled + ' placeholder="{{Type de Capteur}}" readonly=true></textarea>';	
-        tr += '</td>';
-        tr += '<td><input class="cmdAttr form-control input-sm" data-l1key="unite" style="width : 90px;" placeholder="{{Unite}}">';
-	tr += 'Type de donnée :<br/>';		
-	tr += '<textarea class="cmdAttr form-control input-sm" data-l1key="configuration" data-l2key="sensorType" style="height : 33px;" ' + disabled + ' placeholder="{{Type de donnée}}" readonly=true></textarea>';		
+        tr += '</td><td>';
+		tr += '<textarea class="cmdAttr form-control input-sm" data-l1key="configuration" data-l2key="topic" style="height : 33px;" ' + disabled + ' placeholder="{{Topic}}" readonly=true></textarea>';		
+        tr += '</td><td>';
+        tr += '<textarea class="cmdAttr form-control input-sm" data-l1key="configuration" data-l2key="value" style="height : 33px;" ' + disabled + ' placeholder="{{Valeur}}" readonly=true></textarea>';
         tr += '</td><td>';
         tr += '<span><input type="checkbox" class="cmdAttr" data-l1key="isHistorized"/> {{Historiser}}<br/></span>';
         tr += '<span><input type="checkbox" class="cmdAttr" data-l1key="isVisible" checked/> {{Afficher}}<br/></span>';
@@ -159,34 +147,20 @@ function addCmdToTable(_cmd) {
         tr += '<input class="cmdAttr form-control input-sm" data-l1key="name">';
         tr += '</div>';
         tr += '</div>';
-        tr += '<select class="cmdAttr form-control tooltips input-sm" data-l1key="value" style="display : none;margin-top : 5px;" title="{{La valeur de la commande vaut par défaut la commande}}">';
-	tr += '<option value="">Aucune</option>';
-	tr += '</select>';
         tr += '</td>';
         tr += '<td>';
         tr += '<input class="cmdAttr form-control type input-sm" data-l1key="type" value="action" disabled style="margin-bottom : 5px;" />';
-		tr += '<span>{{Message}}:<select class="cmdAttr" data-l1key="configuration" data-l2key="cmdCommande">';
-			$.each(mySensorDico['C'],function(item, index){ 
-				tr += '<option value="' + index + '">' + item + '</option>';
-			})
-		tr +='</select></span>';
         tr += '<span class="subType" subType="' + init(_cmd.subType) + '" style=""></span>';
         //tr += '<input class="cmdAttr" data-l1key="configuration" data-l2key="virtualAction" value="1" style="display:none;" >';
         tr += '</td>';
          tr += '<td>';
-			tr += '<textarea class="cmdAttr form-control input-sm" data-l1key="configuration" data-l2key="sensor" style="height : 33px;" ' + disabled + ' placeholder="{{N° Actionneur}}"></textarea><br/>';
-        tr += 'Valeur de la commande :<br/>';
-			tr += '<textarea class="cmdAttr form-control input-sm" data-l1key="configuration" data-l2key="request" style="height : 33px;" ' + disabled + ' placeholder="{{Valeur}}"></textarea>';
-        tr += '</td><td>';
-	tr += '<span>{{Type de donnée}}:<select class="cmdAttr" data-l1key="configuration" data-l2key="cmdtype">';
-			$.each(mySensorDico['N'],function(item, index){ 
-				tr += '<option value="' + index + '">' + item + '</option>';
-			})
+		tr += '<textarea class="cmdAttr form-control input-sm" data-l1key="configuration" data-l2key="topic" style="height : 33px;" ' + disabled + ' placeholder="{{Topic}}"></textarea><br/>';
+		tr += '</td><td>';
+		tr += '<textarea class="cmdAttr form-control input-sm" data-l1key="configuration" data-l2key="request" style="height : 33px;" ' + disabled + ' placeholder="{{Valeur}}"></textarea>';
 		tr +='</select></span>';
         tr += '</td><td>';
         tr += '<span><input type="checkbox" class="cmdAttr" data-l1key="isVisible" checked/> {{Afficher}}<br/></span>';
         tr += '<span><input type="checkbox" class="cmdAttr" data-l1key="display" data-l2key="parameters" data-l3key="displayName" checked/> {{Afficher le Nom}}<br/></span>';
-        
         tr += '</td>';
         tr += '<td>';
         if (is_numeric(_cmd.id)) {
