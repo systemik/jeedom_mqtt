@@ -79,13 +79,13 @@ class MQTT extends eqLogic {
 				$elogic->save();
 				$cmdlogic = MQTTCmd::byEqLogicIdAndLogicalId($elogic->getId(),$cmdId);
 				if (is_object($cmdlogic)) {
-					log::add('MQTT', 'info', 'Cmdlogic existe');
-					$topCmd->setConfiguration('topic', $topic);
+					log::add('MQTT', 'info', 'Cmdlogic existe, pas de creation');
+					$cmdlogic->setConfiguration('topic', $topic);
 					$cmdlogic->setConfiguration('value', $value);
 					$cmdlogic->save();
 					$cmdlogic->event($value);
 				} else {
-					log::add('MQTT', 'info', 'Cmdlogic n existe pas');
+					log::add('MQTT', 'info', 'Cmdlogic n existe pas, creation');
 					$topCmd = new MQTTCmd();
 					$topCmd->setEqLogic_id($elogic->getId());
 					$topCmd->setEqType('MQTT');
@@ -105,7 +105,7 @@ class MQTT extends eqLogic {
 					$topCmd->event($value);
 				}
 			} else {
-				log::add('MQTT', 'info', 'Equipement n existe pas');
+				log::add('MQTT', 'info', 'Equipement n existe pas, creation');
 				$topic = new MQTT();
 				$topic->setEqType_name('MQTT');
 				$topic->setLogicalId($nodeid);
@@ -140,9 +140,7 @@ class MQTT extends eqLogic {
 		$publish = new Mosquitto\Client();
 		$publish->connect($mosqHost, $mosqPort, 60);
 		$publish->publish($subject, $message, 1, false);
-		$publish->publish('mytopic', 'subject', 0, false);
 		$publish->disconnect();
-		$client->publish($subject, $message, 1, false);
 		unset($publish);
 	}
 

@@ -2,10 +2,6 @@
 include::presentation.asciidoc[]
 
 '''
-== Prerequis
-include::prerequis.asciidoc[]
-
-'''
 == Configuration
 include::configuration.asciidoc[]
 

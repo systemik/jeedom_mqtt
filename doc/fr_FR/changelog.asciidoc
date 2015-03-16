@@ -1,3 +1,5 @@
 ==== Version 0.1
 
 Première version
+Permet de récupérer automatiquement les messages d'un Mosquitto
+Permet de publier des messages sur Mosquitto

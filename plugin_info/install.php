@@ -29,7 +29,8 @@ function MQTT_install() {
         $cron->setSchedule('* * * * *');
         $cron->save();
         exec('sudo apt-get -y install mosquitto mosquitto-clients libmosquitto-dev');
-        //exec('pecl install Mosquitto-alpha');
+        exec('echo "" | sudo pecl install Mosquitto-alpha');
+        exec('echo "extension=mosquitto.so" | sudo tee -a /etc/php5/fpm/php.ini');
     }
 }
 
