@@ -11,8 +11,8 @@ t": "Permet de gérer des équipements accessible par le protocole MQTT, intègr
 "Port de Mosquitto : ": "Port de Mosquitto : ",
 "Identifiant de Connexion : ": "Identifiant de Connexion : ",
 "Sauvegarde": "Sauvegarde",
-"La sauvegarde de la configuration redémarre automatiquement le service, il faut attendre environ 1 minute pour qu\\'il soit joignable": "La sauvegarde de la
-configuration redémarre automatiquement le service, il faut attendre environ 1 minute pour qu\\'il soit joignable"
+"La sauvegarde de la configuration redémarre automatiquement le service, il faut attendre environ 1 minute pour qu\'il soit joignable": "La sauvegarde de la
+configuration redémarre automatiquement le service, il faut attendre environ 1 minute pour qu\'il soit joignable"
 },
 "plugins\/MQTT\/desktop\/php\/MQTT.php": {
 "Ajouter un équipement": "Ajouter un équipement",
