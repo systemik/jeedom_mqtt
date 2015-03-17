@@ -56,7 +56,7 @@ if (!isConnect()) {
             </div>
         </div>              
 				
-				<div class="alert alert-success"><b>{{Sauvegarde}} : </b>{{La sauvegarde de la configuration redémarre automatiquement le service, il faut attendre environ 1 minute pour qu\'il soit joignable}}</div>' ;
+				<div class="alert alert-success"><b>{{Sauvegarde}} : </b>{{La sauvegarde de la configuration redémarre automatiquement le service, il faut attendre environ 1 minute pour qu'il soit joignable}}</div>' ;
 				
 			<script>	
 							
