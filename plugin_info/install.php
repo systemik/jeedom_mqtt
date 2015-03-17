@@ -31,6 +31,7 @@ function MQTT_install() {
         exec('sudo apt-get -y install mosquitto mosquitto-clients libmosquitto-dev');
         exec('echo "" | sudo pecl install Mosquitto-alpha');
         exec('echo "extension=mosquitto.so" | sudo tee -a /etc/php5/fpm/php.ini');
+        exec('sudo service php5-fpm restart');
     }
 }
 
