@@ -28,10 +28,8 @@ function MQTT_install() {
         $cron->setDeamon(1);
         $cron->setSchedule('* * * * *');
         $cron->save();
-        exec('sudo apt-get -y install mosquitto mosquitto-clients libmosquitto-dev');
-        exec('echo "" | sudo pecl install Mosquitto-alpha');
-        exec('echo "extension=mosquitto.so" | sudo tee -a /etc/php5/fpm/php.ini');
-        exec('sudo service php5-fpm restart');
+        $install_path = dirname(__FILE__) . '/../resources';
+        exec('sudo bash ../resources/install.sh');
     }
 }
 
