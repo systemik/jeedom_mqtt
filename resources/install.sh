@@ -1,22 +1,21 @@
 #! /bin/bash
 
-
-source /etc/lsb-release
-if (DISTRIB_ID == "Debian") {
+apt-get -y install lsb-release
+if [ `lsb_release -i -s` == "Debian" ]; then
   wget http://repo.mosquitto.org/debian/mosquitto-repo.gpg.key
   apt-key add mosquitto-repo.gpg.key
   cd /etc/apt/sources.list.d/
-  if (DISTRIB_CODENAME == "wheezy") {
+  if [ `lsb_release -c -s` == "wheezy" ]; then
     wget http://repo.mosquitto.org/debian/mosquitto-wheezy.list
-  elif (DISTRIB_CODENAME == "jessie") {
+  elif [ `lsb_release -c -s` == "jessie" ]; then
     wget http://repo.mosquitto.org/debian/mosquitto-jessie.list
-  }
-} elif (DISTRIB_ID == "Ubuntu") {
+  fi
+elif [ `lsb_release -i -s` == "Ubuntu" ]; then
   apt-add-repository ppa:mosquitto-dev/mosquitto-ppa
-}
+fi
 
 apt-get update
-apt-get -y install mosquitto mosquitto-clients libmosquitto-dev
+apt-get -y install mosquitto mosquitto-clients libmosquitto-dev php5-dev
 echo "" | pecl install Mosquitto-alpha
 echo "extension=mosquitto.so" | tee -a /etc/php5/fpm/php.ini
 service php5-fpm restart
