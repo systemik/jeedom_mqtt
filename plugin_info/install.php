@@ -27,10 +27,10 @@ function MQTT_install() {
         $cron->setEnable(1);
         $cron->setDeamon(1);
         $cron->setSchedule('* * * * *');
-        $cron->save();
-        $install_path = dirname(__FILE__) . '/../resources';
-        exec('sudo bash ../resources/install.sh');
+        $cron->save();      
     }
+    $install_path = dirname(__FILE__) . '/../resources';
+    passthru('sudo /bin/bash ' . $install_path . '/install.sh > /tmp/install 2>&1 &');
 }
 
 function MQTT_update() {
@@ -48,7 +48,7 @@ function MQTT_update() {
 }
 
 function MQTT_remove() {
-    $cron = cron::byClassAndFunction('MQTT', 'pull');
+    $cron = cron::byClassAndFunction('MQTT', 'daemon');
     if (is_object($cron)) {
         $cron->stop();
         $cron->remove();

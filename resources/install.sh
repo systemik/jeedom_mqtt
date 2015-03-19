@@ -16,6 +16,8 @@ fi
 
 apt-get update
 apt-get -y install mosquitto mosquitto-clients libmosquitto-dev php5-dev
-echo "" | pecl install Mosquitto-alpha
-echo "extension=mosquitto.so" | tee -a /etc/php5/fpm/php.ini
-service php5-fpm restart
+if [ ! `cat /etc/php5/fpm/php.ini | grep "mosquitto"` ]; then
+	echo "" | pecl install Mosquitto-alpha
+	echo "extension=mosquitto.so" | tee -a /etc/php5/fpm/php.ini
+	service php5-fpm restart
+fi
