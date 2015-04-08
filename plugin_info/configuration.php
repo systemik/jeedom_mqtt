@@ -39,7 +39,7 @@ if (!isConnect()) {
  		echo'<div class="form-group">
 	        <label class="col-lg-4 control-label">{{Installation automatique impossible}}</label>
 	        <div class="col-lg-3">
-	            {{Veuillez lancer la commande suivante :}} wget http://127.0.0.1/jeedom/plugins/MQTT/resources/install.sh -v -O install.sh; ./install.sh
+	            {{Pour installer les dépendances :}} wget http://127.0.0.1/jeedom/plugins/MQTT/resources/install.sh -v -O install.sh; ./install.sh
 	        </div>
 	    </div>';
  	}
