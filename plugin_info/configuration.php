@@ -34,6 +34,16 @@ if (!isConnect()) {
 	} else {
 		echo '<div class="alert alert-success"><b>{{Connexion}} : </b> {{Jeedom est connecté à Mosquitto}}</div>';
 	}
+	
+	 if (exec('sudo cat /etc/sudoers')=="") {
+ 		echo'<div class="form-group">
+	        <label class="col-lg-4 control-label">{{Installation automatique impossible}}</label>
+	        <div class="col-lg-3">
+	            {{Veuillez lancer la commande suivante :}} wget http://127.0.0.1/jeedom/plugins/mySensors/resources/install.sh -v -O install.sh; ./install.sh
+	        </div>
+	    </div>';
+ 	}
+	
 	?>
 
     
