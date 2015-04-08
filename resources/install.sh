@@ -7,8 +7,10 @@ if [ `lsb_release -i -s` == "Debian" ]; then
   cd /etc/apt/sources.list.d/
   if [ `lsb_release -c -s` == "wheezy" ]; then
     wget http://repo.mosquitto.org/debian/mosquitto-wheezy.list
+    cp mosquitto-wheezy.list /etc/apt/sources.list.d/mosquitto-wheezy.list
   elif [ `lsb_release -c -s` == "jessie" ]; then
     wget http://repo.mosquitto.org/debian/mosquitto-jessie.list
+    cp mosquitto-jessie.list /etc/apt/sources.list.d/mosquitto-jessie.list
   fi
 elif [ `lsb_release -i -s` == "Ubuntu" ]; then
   apt-add-repository ppa:mosquitto-dev/mosquitto-ppa
