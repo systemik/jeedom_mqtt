@@ -34,19 +34,40 @@ class MQTT extends eqLogic {
         	$mosqHost = config::byKey('mqttAdress', 'MQTT', 0);
 		$mosqPort = config::byKey('mqttPort', 'MQTT', 0);
         	$mosqId = config::byKey('mqttId', 'MQTT', 0);
+        	//$mosqAuth = config::byKey('mqttSecure', 'MQTT', 0);
+        	//$mosqUser = config::byKey('mqttUser', 'MQTT', 0);
+        	//$mosqPass = config::byKey('mqttPass', 'MQTT', 0);
+        	//$mosqSecure = config::byKey('mqttSecure', 'MQTT', 0);
+        	//$mosqCA = config::byKey('mqttCA', 'MQTT', 0);
+        	//$mosqTree = config::byKey('mqttTree', 'MQTT', 0);
         	log::add('MQTT', 'info', 'Paramètres utilisés, Host : ' . $mosqHost . ', Port : ' . $mosqPort . ', ID : ' . $mosqId);
         	if (isset($mosqHost) && isset($mosqPort) && isset($mosqId)) {
         		//https://github.com/mqtt/mqtt.github.io/wiki/mosquitto-php
 			$client = new Mosquitto\Client($mosqId);
+			//if ($mosqAuth) {
+			//$client->setCredentials($mosqUser, $mosqPass);	
+			//}
+			//if ($mosqSecure) {
+			//$client->setTlsOptions($certReqs = Mosquitto\Client::SSL_VERIFY_PEER, $tlsVersion = 'tlsv1.2', $ciphers=NULL);
+			//$client->setTlsCertificates($caPath = 'path/to/my/ca.crt');
+			//}
 			$client->onConnect('MQTT::connect');
 			$client->onDisconnect('MQTT::disconnect');
 			$client->onSubscribe('MQTT::subscribe');
 			$client->onMessage('MQTT::message');
-			$client->connect($mosqHost, $mosqPort, 60);
-			$client->subscribe('#', 1); // Subscribe to all messages
-			$client->loopForever();
+			$client->onLog('MQTT::logmq');
+			$client->setWill('/jeedom', "Client died :-(", 1, 0);
+			try {
+				$client->connect($mosqHost, $mosqPort, 60);
+				$client->subscribe('#', 1); // Subscribe to all messages
+				//$client->loopForever();
+				while (true) { $client->loop(); }
+			}
+			catch (Exception $e){
+				log::add('MQTT', 'error', $e->getMessage());
+			}
         	} else {
-        		log::add('MQTT', 'info', 'Toutes les paramètres ne sont pas définis');
+        		log::add('MQTT', 'info', 'Tous les paramètres ne sont pas définis');
         	}
     	}
     	
@@ -60,13 +81,17 @@ class MQTT extends eqLogic {
     		config::save('status', '1',  'MQTT');
     	}
     	
-    	public static function disconnect( ) {
-    		log::add('MQTT', 'info', 'Déconnecté de Mosquitto');
+    	public static function disconnect( $r ) {
+    		log::add('MQTT', 'info', 'Déconnecté de Mosquitto' . $r);
     		config::save('status', '0',  'MQTT');
     	}
     	
     	public static function subscribe( ) {
     		log::add('MQTT', 'info', 'Subscribe ');
+    	}
+    	
+    	public static function logmq( $str ) {
+    		log::add('MQTT', 'debug', $str);
     	}
     	
     	public static function message( $message ) {
@@ -85,7 +110,7 @@ class MQTT extends eqLogic {
 				$elogic->save();
 				$cmdlogic = MQTTCmd::byEqLogicIdAndLogicalId($elogic->getId(),$cmdId);
 				if (is_object($cmdlogic)) {
-					log::add('MQTT', 'info', 'Cmdlogic existe, pas de creation');
+					log::add('MQTT', 'debug', 'Cmdlogic existe, pas de creation');
 					$cmdlogic->setConfiguration('topic', $topic);
 					$cmdlogic->setConfiguration('value', $value);
 					$cmdlogic->save();
@@ -139,11 +164,11 @@ class MQTT extends eqLogic {
     	}
 
 	public static function publishMosquitto( $subject, $message ) {
-		log::add('MQTT', 'info', 'Envoi du message ' . $message . ' vers ' . $subject);
-        $mosqHost = config::byKey('mqttAdress', 'MQTT', 0);
+		log::add('MQTT', 'debug', 'Envoi du message ' . $message . ' vers ' . $subject);
+        	$mosqHost = config::byKey('mqttAdress', 'MQTT', 0);
 		$mosqPort = config::byKey('mqttPort', 'MQTT', 0);
-        $mosqId = config::byKey('mqttId', 'MQTT', 0);
-		$publish = new Mosquitto\Client();
+        	$mosqId = config::byKey('mqttId', 'MQTT', 0);
+		$publish = new Mosquitto\Client($mosqId);
 		$publish->connect($mosqHost, $mosqPort, 60);
 		$publish->publish($subject, $message, 1, false);
 		$publish->disconnect();
