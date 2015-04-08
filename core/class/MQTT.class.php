@@ -28,12 +28,15 @@ class MQTT extends eqLogic {
 
     /************************Methode static*************************** */
 
-		public static function daemon() {
+	public static function daemon() {
         	log::add('MQTT', 'info', 'Lancement du démon MQTT');
+        	
         	$mosqHost = config::byKey('mqttAdress', 'MQTT', 0);
-			$mosqPort = config::byKey('mqttPort', 'MQTT', 0);
+		$mosqPort = config::byKey('mqttPort', 'MQTT', 0);
         	$mosqId = config::byKey('mqttId', 'MQTT', 0);
-        	//https://github.com/mqtt/mqtt.github.io/wiki/mosquitto-php
+        	log::add('MQTT', 'info', 'Paramètres utilisés, Host : ' . $mosqHost . ', Port : ' . $mosqPort . ', ID : ' . $mosqId);
+        	if (isset($mosqHost) && isset($mosqPort) && isset($mosqId)) {
+        		//https://github.com/mqtt/mqtt.github.io/wiki/mosquitto-php
 			$client = new Mosquitto\Client($mosqId);
 			$client->onConnect('MQTT::connect');
 			$client->onDisconnect('MQTT::disconnect');
@@ -42,6 +45,9 @@ class MQTT extends eqLogic {
 			$client->connect($mosqHost, $mosqPort, 60);
 			$client->subscribe('#', 1); // Subscribe to all messages
 			$client->loopForever();
+        	} else {
+        		log::add('MQTT', 'info', 'Toutes les paramètres ne sont pas définis');
+        	}
     	}
     	
     	public function stopDaemon() { 
