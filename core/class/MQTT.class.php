@@ -76,13 +76,13 @@ class MQTT extends eqLogic {
 			$cron->stop();
 		}
     	
-    	public static function connect( $r ) {
-    		log::add('MQTT', 'info', 'Connecté à Mosquitto ' . $r);
+    	public static function connect( $r, $message ) {
+    		log::add('MQTT', 'info', 'Connexion à Mosquitto avec code ' . $r . $message);
     		config::save('status', '1',  'MQTT');
     	}
     	
     	public static function disconnect( $r ) {
-    		log::add('MQTT', 'info', 'Déconnecté de Mosquitto' . $r);
+    		log::add('MQTT', 'info', 'Déconnexion de Mosquitto avec code ' . $r);
     		config::save('status', '0',  'MQTT');
     	}
     	
@@ -90,8 +90,8 @@ class MQTT extends eqLogic {
     		log::add('MQTT', 'info', 'Subscribe ');
     	}
     	
-    	public static function logmq( $str ) {
-    		log::add('MQTT', 'debug', $str);
+    	public static function logmq( $code, $str ) {
+    		log::add('MQTT', 'debug', $code . $str);
     	}
     	
     	public static function message( $message ) {
