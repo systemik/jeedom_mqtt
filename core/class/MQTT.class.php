@@ -91,7 +91,7 @@ class MQTT extends eqLogic {
     	}
     	
     	public static function logmq( $code, $str ) {
-    		log::add('MQTT', 'debug', $code . $str);
+    		log::add('MQTT', 'debug', $code . ' : ' . $str);
     	}
     	
     	public static function message( $message ) {
