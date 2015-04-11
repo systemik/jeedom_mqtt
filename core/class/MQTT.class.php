@@ -169,7 +169,7 @@ class MQTT extends eqLogic {
 		$mosqPort = config::byKey('mqttPort', 'MQTT', 0);
         	$mosqId = config::byKey('mqttId', 'MQTT', 0);
         	$mosqPub = $mosqId . '_pub';
-		$publish = new Mosquitto\Client($mosqId);
+		$publish = new Mosquitto\Client($mosqPub);
 		$publish->connect($mosqHost, $mosqPort, 60);
 		$publish->publish($subject, $message, 1, false);
 		$publish->disconnect();
