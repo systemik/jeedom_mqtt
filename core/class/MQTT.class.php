@@ -137,16 +137,16 @@ class MQTT extends eqLogic {
 				}
 			} else {
 				log::add('MQTT', 'info', 'Equipement n existe pas, creation');
-				$topic = new MQTT();
-				$topic->setEqType_name('MQTT');
-				$topic->setLogicalId($nodeid);
-				$topic->setName($nodeid);
-				$topic->setIsEnable(true);
-				$topic->save();
-				$topic->setStatus('lastCommunication', date('Y-m-d H:i:s'));
-				$topic->save();
+				$topi = new MQTT();
+				$topi->setEqType_name('MQTT');
+				$topi->setLogicalId($nodeid);
+				$topi->setName($nodeid);
+				$topi->setIsEnable(true);
+				$topi->save();
+				$topi->setStatus('lastCommunication', date('Y-m-d H:i:s'));
+				$topi->save();
 				$topCmd = new MQTTCmd();
-				$topCmd->setEqLogic_id($topic->getId());
+				$topCmd->setEqLogic_id($topi->getId());
 				$topCmd->setEqType('MQTT');
 				$topCmd->setCache('enable', 0);
 				$topCmd->setEventOnly(1);
