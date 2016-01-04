@@ -14,5 +14,5 @@ Vous pouvez l'installer avec :
 
   sudo apt-get install libmosquitto-dev
   
-  suduo pecl install Mosquitto-alpha
+  sudo pecl install Mosquitto-alpha
 --
